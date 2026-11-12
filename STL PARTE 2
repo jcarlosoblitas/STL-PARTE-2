@@ -1,0 +1,365 @@
+#include<algorithm>
+#include<cmath>
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+
+
+class Estudiante{
+private:
+    string nombre;
+    int anio;
+    double gpa;
+    double presupuesto;
+
+public:
+    Estudiante();
+    Estudiante(string _nombre,int _anio,double _gpa,double _presupuesto);
+    string getNombre();
+    int getAnio();
+    double getGpa();
+    double getPresupuesto();
+    double indiceUniversidad();
+    void modificar(string _nombre,int _anio,double _gpa,double _presupuesto);
+    void mostrar();
+};
+
+// est por defecto
+Estudiante::Estudiante()
+{
+    nombre="NN";
+    anio=0;
+    gpa=0;
+    presupuesto=0;
+}
+
+Estudiante::Estudiante(string _nombre,int _anio,double _gpa,double _presupuesto)
+{
+    nombre=_nombre;
+    anio=_anio;
+    gpa=_gpa;
+    presupuesto=_presupuesto;
+}
+
+string Estudiante::getNombre()
+{
+    return nombre;
+}
+
+int Estudiante::getAnio()
+{
+    return anio;
+}
+
+double Estudiante::getGpa()
+{
+    return gpa;
+}
+
+double Estudiante::getPresupuesto()
+{
+    return presupuesto;
+}
+
+// calcula el indice U
+double Estudiante::indiceUniversidad()
+{
+    return fabs(gpa-3)*presupuesto;
+}
+
+// cambia datos de un estudiante
+void Estudiante::modificar(string _nombre,int _anio,double _gpa,double _presupuesto)
+{
+    nombre=_nombre;
+    anio=_anio;
+    gpa=_gpa;
+    presupuesto=_presupuesto;
+}
+
+void Estudiante::mostrar()
+{
+    cout<<"Nombre: "<<nombre<<" | Anio: "<<anio<<" | GPA: "<<gpa
+         <<" | Presupuesto: "<<presupuesto
+         <<" | Indice universidad: "<<indiceUniversidad()<<endl;
+}
+
+// comparadores para sort()
+bool porAnio(Estudiante a,Estudiante b)
+{
+    return a.getAnio()<b.getAnio();
+}
+
+bool porGpa(Estudiante a,Estudiante b)
+{
+    return a.getGpa()<b.getGpa();
+}
+
+bool porPresupuesto(Estudiante a,Estudiante b)
+{
+    return a.getPresupuesto()<b.getPresupuesto();
+}
+
+bool porIndice(Estudiante a,Estudiante b)
+{
+    return a.indiceUniversidad()<b.indiceUniversidad();
+}
+
+// Imprimir recorre el vector con un for
+void imprimir(vector<Estudiante>v)
+{
+    if(v.empty()){
+
+        cout<<"(vector vacio)"<<endl;
+        return;
+    }
+
+    for(int i=0;i<v.size();i++){
+
+        cout<<i<<": ";
+
+        v[i].mostrar();
+    }
+}
+
+// al final del vector
+void insertarFinal(vector<Estudiante>& v,Estudiante e)
+{
+    v.push_back(e);
+}
+
+// ingresa a un indice
+void insertarIndice(vector<Estudiante>& v, int indice, Estudiante e)
+{
+    if (indice< 0||indice>(int)v.size()){
+        cout<<"Indice no valido"<<endl;
+        return;
+    }
+    v.insert(v.begin()+indice,e);
+}
+
+// para eliminar el ultimo del vector
+void eliminarUltimo(vector<Estudiante>& v)
+{
+    if (v.empty()) {
+        cout<<"No hay estudiantes para eliminar"<<endl;
+        return;
+    }
+    v.pop_back();
+}
+
+//esto para eliminar desde el indice
+void eliminarIndice(vector<Estudiante>& v,int indice)
+{
+    if(v.empty()){
+        cout<<"No hay estudiantes para eliminar"<<endl;
+        return;
+    }
+    if(indice<0||indice>=(int)v.size()){
+        cout<<"Indice no valido"<<endl;
+        return;
+    }
+    v.erase(v.begin()+indice);
+}
+
+// actualizar
+void actualizar(vector<Estudiante>& v,int indice,string nombre,int anio,double gpa,double presupuesto)
+{
+    if (indice < 0||indice>=(int)v.size()){
+        cout << "Indice no valido" << endl;
+        return;
+    }
+    v[indice].modificar(nombre,anio,gpa,presupuesto);
+}
+
+// para ordenar
+void ordenar(vector<Estudiante>& v,int criterio)
+{
+    if(criterio==1){
+
+        sort(v.begin(),v.end(),porAnio);
+    }
+    else if(criterio==2){
+
+        sort(v.begin(),v.end(),porGpa);
+    }
+    else if(criterio==3){
+
+        sort(v.begin(),v.end(),porPresupuesto);
+    }
+    else if(criterio==4){
+
+        sort(v.begin(),v.end(),porIndice);
+    }
+    else{
+        cout<<"Opcion no valida"<<endl;
+    }
+}
+
+
+Estudiante leerEstudiante()
+{
+    string nombre;
+    int anio;
+    double gpa, presupuesto;
+    cout<<"Nombre: ";
+    cin>>nombre;
+    cout<<"Anio de nacimiento: ";
+    cin>>anio;
+    cout<<"Promedio GPA: ";
+    cin>>gpa;
+    cout<<"Presupuesto: ";
+    cin>>presupuesto;
+    return Estudiante(nombre,anio,gpa,presupuesto);
+}
+
+void menuIngresar(vector<Estudiante>& v)
+{
+    int donde,tipo,indice=0;
+    cout<<"1. Al final"<<endl;
+    cout<<"2. En un indice: "<<endl;
+    cin>>donde;
+
+    if(donde==2){
+
+        cout<<"Indice (0 a "<<v.size()<<"): ";
+        cin>>indice;
+    }
+
+    cout<<"1. Por defecto (NN,0,0,0)"<<endl;
+    cout<<"2. Con datos: "<<endl;
+    cin>>tipo;
+
+    Estudiante e;
+
+    if(tipo==2){
+
+        e=leerEstudiante();
+    }
+
+    if(donde==1){
+
+        insertarFinal(v, e);
+    }
+
+    else if(donde==2){
+
+        insertarIndice(v,indice,e);
+    }
+}
+
+void menuEliminar(vector<Estudiante>&v)
+{
+    if(v.empty()){
+
+        cout<<"No hay estudiantes para eliminar"<<endl;
+
+        return;
+    }
+
+    int op,indice;
+
+    cout<<"1. Eliminar el ultimo"<<endl;
+    cout<<"2. Eliminar desde un indice: "<<endl;
+    cin>>op;
+
+
+    if(op==1){
+
+        eliminarUltimo(v);
+    }
+
+    else if(op==2){
+
+        cout<<"Indice (0 a "<< v.size()-1<<"): ";
+        cin>>indice;
+        eliminarIndice(v,indice);
+    }
+}
+
+void menuActualizar(vector<Estudiante>&v)
+{
+    if(v.empty()){
+
+        cout<<"No hay estudiantes para actualizar"<<endl;
+        return;
+    }
+
+    int indice;
+    cout<<"Indice a actualizar (0 a "<<v.size()-1<< "): ";
+    cin>>indice;
+
+    if(indice<0 || indice>=(int)v.size()){
+
+        cout<<"Indice no valido"<<endl;
+        return;
+    }
+
+    Estudiante e=leerEstudiante();
+    actualizar(v,indice,e.getNombre(),e.getAnio(),e.getGpa(),e.getPresupuesto());
+}
+
+void menuOrdenar(vector<Estudiante>& v)
+{
+    int op;
+    cout<<"Ordenar por:"<<endl;
+        cout<<"1. Anio"<<endl;
+        cout<<"2. GPA "<<endl;
+        cout<<"3. Presupuesto "<<endl;
+        cout<<"4. Indice universidad:"<<endl;
+
+    cin>>op;
+
+    ordenar(v,op);
+}
+
+int main()
+{
+    // vector para llenar
+    vector<Estudiante>estudiantes;
+    int opcion;
+
+    do {
+        cout<<"\n***MENU ESTUDIANTES******"<<endl;
+        cout<<"1. Ingresar estudiante"<<endl;
+        cout<<"2. Eliminar estudiante"<<endl;
+        cout<<"3. Actualizar estudiante"<<endl;
+        cout<<"4. Ordenar"<<endl;
+        cout<<"5. Imprimir"<<endl;
+        cout<<"0. Salir"<<endl;
+        cout<<"Opcion: ";
+
+        if(!(cin>>opcion)) {
+
+            break;
+        }
+
+        if(opcion==1){
+
+            menuIngresar(estudiantes);
+        }
+
+        else if(opcion==2){
+
+            menuEliminar(estudiantes);
+        }
+
+        else if(opcion==3){
+
+            menuActualizar(estudiantes);
+        }
+
+        else if(opcion==4){
+
+            menuOrdenar(estudiantes);
+        }
+
+        else if(opcion==5){
+
+            imprimir(estudiantes);
+        }
+
+    } while(opcion!=0);
+
+    return 0;
+}
